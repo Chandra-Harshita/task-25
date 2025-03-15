@@ -1,1 +1,1 @@
-Deployment Link - https://poetic-licorice-f8f768.netlify.app/
+Deployment Link - https://delicate-boba-ded674.netlify.app/payment
