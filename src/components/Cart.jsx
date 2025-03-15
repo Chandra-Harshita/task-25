@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   removeItem,
@@ -13,93 +12,77 @@ const Cart = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handleRemove = (id) => {
-    dispatch(removeItem(id))
-  }
-
-  const handleClearCart = () => {
-    dispatch(clearCart())
-  }
-
-  const handleIncrease = (id) => {
-    dispatch(increaseQuantity(id))
-  }
-
-  const handleDecrease = (id) => {
-    dispatch(decreaseQuantity(id))
-  }
-
-  const handlePayment = () => {
-    navigate('/payment')
-  }
+  const totalPrice = items.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  )
 
   return (
-    <div className="fixed top-16 right-0 w-80 p-4 bg-gray-100 shadow-lg h-[calc(100vh-4rem)] overflow-y-auto">
-      <h2 className="text-xl font-bold mb-4">Your Cart</h2>
+    <div className="p-4 bg-gray-100 rounded-lg shadow-lg h-[calc(100vh-4rem)] overflow-y-auto">
+      <h2 className="text-xl font-bold mb-4">Cart</h2>
       {items.length === 0 ? (
-        <p className="text-gray-600">Your cart is empty.</p>
+        <p className="text-gray-500">Your cart is empty.</p>
       ) : (
-        <div className="space-y-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md"
-            >
-              <div className="flex items-center space-x-4">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-16 h-16 object-contain rounded-lg"
-                />
-                <div>
-                  <p className="font-semibold">{item.title}</p>
-                  <p className="text-gray-600">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </p>
+        <>
+          <div className="space-y-2">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="flex justify-between items-center mb-2 bg-white p-2 rounded-lg"
+              >
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-12 h-12 object-cover rounded"
+                  />
+                  <span className="text-gray-800">{item.name}</span>
                 </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleDecrease(item.id)}
-                  className="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  -
-                </button>
-                <span className="px-3 py-1 bg-gray-200 rounded">
-                  {item.quantity}
+                <div className="flex items-center space-x-2">
+                  <button
+                    className="px-2 bg-gray-300 rounded"
+                    onClick={() => dispatch(decreaseQuantity(item.id))}
+                  >
+                    -
+                  </button>
+                  <span className="text-gray-600">{item.quantity}</span>
+                  <button
+                    className="px-2 bg-gray-300 rounded"
+                    onClick={() => dispatch(increaseQuantity(item.id))}
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="text-gray-600">
+                  ₹{(item.price * item.quantity).toFixed(2)}
                 </span>
                 <button
-                  onClick={() => handleIncrease(item.id)}
-                  className="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                  className="text-red-500"
+                  onClick={() => dispatch(removeItem(item.id))}
                 >
-                  +
-                </button>
-                <button
-                  onClick={() => handleRemove(item.id)}
-                  className="text-red-500 hover:text-red-700 font-bold ml-2"
-                >
-                  ✕
+                  Remove
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-      {items.length > 0 && (
-        <div className="mt-6 space-y-2">
+            ))}
+          </div>
+          <hr className="my-2" />
+          <div className="flex justify-between items-center font-bold text-lg">
+            <span>Total:</span>
+            <span>₹{totalPrice.toFixed(2)}</span>
+          </div>
           <button
-            onClick={handlePayment}
-            className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-          >
-            Proceed to Payment
-          </button>
-          <button
-            onClick={handleClearCart}
-            className="w-full py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            className="mt-4 w-full bg-red-500 text-white p-2 rounded-lg"
+            onClick={() => dispatch(clearCart())}
           >
             Clear Cart
           </button>
-        </div>
+          <button
+            className="mt-2 w-full bg-green-500 text-white p-2 rounded-lg"
+            onClick={() => navigate('/payment')}
+          >
+            Proceed to Payment
+          </button>
+        </>
       )}
     </div>
   )
